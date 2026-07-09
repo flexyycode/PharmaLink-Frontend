@@ -38,12 +38,14 @@ function Home () {
                                </div>
                                <span className='text-center'>Search Network</span>
                             </button>
-                        </p>
+                        </p> 
+                        <Link to="/login">
                         <p>
                             <button className='border border-gray-300 text-xl px-4 py-2 rounded-lg cursor-pointer text-black hover:bg-gray-200'>
                                 Pharmacy Login
                             </button>
-                        </p>
+                        </p> 
+                        </Link>
                      </div>
                 </div> 
             </section>  

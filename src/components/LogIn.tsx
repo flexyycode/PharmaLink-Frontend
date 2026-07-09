@@ -18,7 +18,7 @@ function Login() {
         // Authentication 
         if (selectedRole === "super_admin") {
             // Redirect to super admin dashboard
-            navigate('/super-admin-dashboard'); 
+            navigate('/super-admin/dashboard'); 
         } else if (selectedRole === "pharmacy") {
             // Redirect to pharmacy dashboard
             navigate('/pharmacy-dashboard'); 
@@ -29,11 +29,13 @@ function Login() {
     return (
         <div className='p-8 bg-gradient-to-br from-blue-50 to-white mx-auto'> 
             <div className='mx-auto py-40 w-full max-w-5xl'> 
-                <div className='mx-auto container'>
+                <div className='mx-auto container'> 
+                    <Link to="/home">
                     <div className='flex justify-center items-center gap-2'>
                         <Shield className='text-white bg-blue-600 size-10 p-2 px-2 rounded-lg'/> 
                         <p className='text-2xl font-bold text-blue-900'>PharmaLink</p> 
-                    </div> 
+                    </div>  
+                    </Link>
                         <h1 className='text-center py-3 font-bold text-gray-900 text-3xl mb-2'>Welcome back</h1> 
                         <p className='text-center text-gray-600'>Select your role to continue</p>  
                 </div> 
@@ -51,7 +53,7 @@ function Login() {
                             description="Full platform access, pharmacy management, subscription control, and network monitoring" />
                         </div> 
 
-                        {/* Pharmacy login */}
+                        {/* Pharmacy login */}  
                         <div className='max-w-[40%]'
                         onClick={() => setSelectedRole('pharmacy')}
                         > 
@@ -142,7 +144,7 @@ function Login() {
                         <h1 className=' py-5 text-gray-600 text-center'>Looking for Medications?</h1> 
                         <div className='flex justify-center items-center gap-2'>
                                 <User className='size-4'/>  
-                                <Link to="/">
+                                <Link to="/search">
                                 <p>Access Public Search</p> 
                                 </Link>
                         </div>
