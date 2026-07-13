@@ -5,7 +5,7 @@ import Contact from "./components/Contact";
 import Root from "./components/Root"; 
 import Login from "./components/LogIn";
 import SuperAdminDashboard from "./components/Super Admin/SuperAdminDashboard"; 
-import SuperAdminLayout from "./components/Super Admin/SuperAminLayout";
+import SuperAdminLayout from "./components/Super Admin/SuperAdminLayout";
 import PharmacyManagement from "./components/Super Admin/PharmacyManagement";
 import SubscriptionControl from "./components/Super Admin/SubscriptionControl";
 import SuperAdminSettings from "./components/Super Admin/SuperAdminSettings"; 
@@ -32,7 +32,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to="dashboard" replace /> }, 
           { path: "dashboard", Component: SuperAdminDashboard },  
-          { path: "pharmany", Component: PharmacyManagement}, 
+          { path: "pharmancy", Component: PharmacyManagement}, 
           { path: "subscription", Component: SubscriptionControl },
           { path: "settings", Component: SuperAdminSettings }, 
           { path: "network", Component: DrugNetworkMonitor }

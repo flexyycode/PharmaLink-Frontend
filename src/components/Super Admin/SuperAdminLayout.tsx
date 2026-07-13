@@ -4,8 +4,8 @@ import { useLocation, Outlet, Link } from "react-router-dom";
 
 const navigation = [
     { name: "Dashboard", href: "/super-admin/dashboard", icon: LayoutDashboard },
-    { name: "Pharmacy Management", href: "/super-admin/pharmacies", icon: Building2 },
-    { name: "Subscription", href:"/", icon: CreditCard}, 
+    { name: "Pharmacy Management", href: "/super-admin/pharmancy", icon: Building2 },
+    { name: "Subscription", href:"/super-admin/subscription", icon: CreditCard}, 
     { name: "Drug Netwrk Monitor", href: "/", icon: Network},
     { name: "Annalytics", href:"/", icon: ChartColumn }, 
     { name: "Settings", href: "/", icon: Settings }
