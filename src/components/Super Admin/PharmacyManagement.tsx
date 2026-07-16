@@ -1,29 +1,73 @@
-import { Plus, MapPin } from "lucide-react"; 
+import { Plus, MapPin, Slice } from "lucide-react"; 
 import Modal from "../Modal";
-import { useState } from "react";
+import { useState, useEffect } from "react"; 
+
 
 function PharmacyManagement () { 
 
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [formdata, setFormData] = useState({ 
         name: "", 
-        licenseid: "", 
+        licenseId: "", 
         contactEmail: "", 
         phone: "",  
         address: "",  
         city: "", 
         state: "", 
         zipCode: "", 
-        location: "",
-        autoGeneratePassword: true,
-        subscriptionPlan: "Standard",
+        location: "", 
+        password: "", 
+        subscriptionType: "paid",  
+        duration: "12", 
         startDate: new Date().toISOString().split('T')[0],
         expiryDate: "",
         coordinates: { lat: 0, lng: 0 }
-    }) 
+    })  
+
+    useEffect(() =>  { 
+        if (
+            formdata.subscriptionType === "paid" && 
+            formdata.startDate && 
+            formdata.duration
+        ) {
+            const date = new Date(formdata.startDate); 
+            date.setMonth(date.getMonth() + Number(formdata.duration)); 
+
+            setFormData(prev => ({
+                ...prev, 
+                expiryDate: date.toISOString().split('T')[0]
+            }))
+        }
+    
+    }, [
+        formdata.startDate,
+        formdata.duration,
+        formdata.subscriptionType 
+    ]) 
+
+    const handleCreatePharmacy = () => {
+        const newPharmacy: Pharmacy = {
+            id: `pharm-${Date.now()}`, 
+            name: formdata.name, 
+            licenseId: formdata.licenseId,  
+            contactEmail: formdata.contactEmail, 
+            phone: formdata.phone, 
+            address: formdata.address,
+            city: formdata.city, 
+            state: formdata.state, 
+            location: formdata.location,  
+            coordinates: formdata.coordinates.lat !== 0 ? formdata.coordinates : undifined,
+            status: "active", 
+            subscriptionType: formdata.subscriptionType, 
+            startDate: formdata.startDate, 
+            expiryDate: formdata.expiryDate, 
+            createdAt: new Date().toISOString(),
+
+        }
+    }
     return ( 
         <div className="h-screen p-8 overflow-hidden"> 
-            <div className="flex justify-between items-center pb-10"> 
+            <div className="flex justify-between items-center"> 
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">Pharmacy Management</h1> 
                     <p className="text-gray-600">Create, manage, and monitor pharmacy accounts</p>  
@@ -37,7 +81,7 @@ function PharmacyManagement () {
                         Create Pharmacy
                     </button>
 
-                    <Modal 
+                    <Modal  
                         title="Create New Pharmacy" 
                         description="Add a new pharmacy to the PharmaLink network with complete location details."
                         isOpen={isCreateOpen}
@@ -50,26 +94,32 @@ function PharmacyManagement () {
                         
 
                         {/* Your form starts here */}  
-                    <div className="grid gap-4 py-4 max-w-2xl">    
+                    <div className="grid gap-4 max-w-2xl">    
 
                         {/*Basic Information*/}
                         <div className="space-y-4">
-                            <h3 className="font-semibold text-sm text-gray-700">Basic Information</h3> 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label htmlFor="name"> Pharmacy Name * </label> 
+                            <h3 className="font-bold text-sm text-gray-700">Basic Information</h3> 
+                            <div className="">
+                                <div className="flex flex-col pb-5">
+                                    <label htmlFor="name" 
+                                    className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"> 
+                                    Pharmacy Name * </label> 
                                     <input 
-                                    className="border border-gray-300 px-3 rounded-2xl"
+                                    className="bg-gray-100 px-3 py-3 rounded-2xl"
                                     id="name"
                                     value={formdata.name} 
                                     onChange={(e) => setFormData({...formdata, name: e.target.value})} 
                                     placeholder="Enter Pharmacy Name"
                                     />
                                 </div> 
-                                <div className="space-y-2">
-                                    <label htmlFor="licenseid" className="px-3">License ID * </label> 
+                                <div className="flex flex-col">
+                                    <label 
+                                    htmlFor="licenseid" 
+                                    className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
+                                        License ID * 
+                                        </label> 
                                     <input 
-                                    className="border border-gray-300 px-3 rounded-2xl"
+                                    className="bg-gray-100 px-3 py-3 rounded-2xl"
                                     id="licenseId" 
                                     value={formdata.licenseid}
                                     onChange={(e) => setFormData({...formdata, licenseid: e.target.value})}
@@ -81,22 +131,26 @@ function PharmacyManagement () {
 
                         {/* Contact Information */} 
                         <div className="space-y-4">
-                            <h3 className="font-semibold text-sm text-gray-700">Contact Information</h3>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label htmlFor="contactEmail">Contact Email * </label>  
+                            <h3 className="font-bold text-sm text-gray-700">Contact Information</h3>
+                            <div className="">
+                                <div className="flex flex-col pb-5">
+                                <label htmlFor="contactEmail"
+                                className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+                                >Contact Email * </label>  
                                     <input  
-                                    className="border border-gray-300 px-3 rounded-2xl"
+                                    className="bg-gray-100 px-3 py-3 rounded-2xl"
                                     id="contactEmail" 
                                     value={formdata.contactEmail} 
                                     onChange={(e) => setFormData({...formdata, contactEmail: e.target.value})}
                                     placeholder="Enter Pharmacy Email"
                                     /> 
                                 </div> 
-                                <div>
-                                    <label htmlFor="phone">Phone Number * </label>  
+                                <div className="flex flex-col">
+                                    <label htmlFor="phone"
+                                    className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+                                    >Phone Number * </label>  
                                     <input  
-                                    className="border border-gray-300 px-3 rounded-2xl"
+                                    className="bg-gray-100 px-3 py-3 rounded-2xl"
                                     id="phone" 
                                     value={formdata.phone} 
                                     onChange={(e) => setFormData({...formdata, phone: e.target.value})}
@@ -111,11 +165,13 @@ function PharmacyManagement () {
                                 <MapPin />
                                 Location Information
                                 </h3>
-                            <div className="grid grid-cols-2">
-                                <div className="space-y-2">
-                                    <label htmlFor="address">Street Address * </label>  
+                            <div className="">
+                                <div className="flex flex-col">
+                                    <label htmlFor="address"
+                                    className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+                                    >Street Address * </label>  
                                     <input  
-                                    className="border border-gray-300 px-3 rounded-2xl w-4/4"
+                                    className="bg-gray-100 px-3 py-3 rounded-2xl"
                                     id="address" 
                                     value={formdata.address} 
                                     onChange={(e) => setFormData({...formdata, address: e.target.value})}
@@ -123,40 +179,158 @@ function PharmacyManagement () {
                                     /> 
                                 </div>  
                             </div> 
-                            <div className="grid grid-cols-3 gap-">
-                                <div className="space-y-2">
-                                    <label htmlFor="city">City * </label>  
+                            <div className="">
+                                <div className="flex flex-col pb-5">
+                                    <label htmlFor="city" 
+                                    className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+                                    >City * </label>  
                                     <input  
-                                    className="border border-gray-300 px-3 rounded-2xl"
+                                    className="bg-gray-100 px-3 py-3 rounded-2xl"
                                     id="city" 
                                     value={formdata.city} 
                                     onChange={(e) => setFormData({...formdata, city: e.target.value})}
                                     placeholder="Enter City"
                                     /> 
                                 </div> 
-                                <div className="space-y-2">
-                                    <label htmlFor="state">State * </label>  
+                                <div className="flex flex-col pb-5">
+                                    <label htmlFor="state"
+                                    className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+                                    >State * </label>  
                                     <input  
-                                    className="border border-gray-300 px-3 rounded-2xl"
+                                    className="bg-gray-100 px-3 py-3 rounded-2xl"
                                     id="city" 
                                     value={formdata.state} 
-                                    onChange={(e) => setFormData({...formdata, city: e.target.value})}
+                                    onChange={(e) => setFormData({...formdata, state: e.target.value})}
                                     placeholder="Enter City"
                                     /> 
                                 </div> 
-                                <div className="space-y-2">
-                                    <label htmlFor="zipCode">Zip Code * </label>  
+                                <div className="flex flex-col pb-5">
+                                    <label htmlFor="zipCode"
+                                    className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+                                    >Zip Code * </label>  
                                     <input  
-                                    className="border border-gray-300 px-3 rounded-2xl"
+                                    className="bg-gray-100 px-3 py-3 rounded-2xl"
                                     id="zipCode" 
                                     value={formdata.zipCode} 
                                     onChange={(e) => setFormData({...formdata, zipCode: e.target.value})}
                                     placeholder="Enter Zip Code"
                                     /> 
+                                </div> 
+                                <div className="flex flex-col">
+                                    <label htmlFor="location"
+                                    className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+                                    >Full Location Summary</label> 
+                                    <input  
+                                    className="bg-gray-100 px-3 py-3 rounded-2xl"
+                                    id="location"
+                                    value={formdata.location}
+                                    onChange={(e) => setFormData({...formdata, location: e.target.value})}
+                                    placeholder="street Address, city, state" />
                                 </div>
                             </div>
                         </div> 
                         
+                    </div>  
+
+                    <div className="py-5">
+                    <div className="border-gray-200 border-0 rounded-lg bg-gray-50 p-3">
+                        <p className="text-xs text-gray-600">💡 Tip: The pharmacy can add map coordinates later from their profile to enable location navigation</p>
+                    </div> 
+                    </div> 
+
+                    {/* Pharmacy Login Password*/}
+                    <div className="">
+                            <hr />
+                        <div className="py-5"> 
+                            <h1>Login Password</h1>   
+                            <div className="flex flex-col pt-5">
+                            <label htmlFor="password">Assign Password</label> 
+                            <input  
+                            className="bg-gray-100 px-3 py-3 rounded-2xl"
+                            id="password" 
+                            value={formdata.password}
+                            onChange={(e) => setFormData({...formdata, password: e.target.value})}
+                            placeholder="Enter Secure Password"
+                            /> 
+                            </div> 
+                            <p>Password will be sent to your email which you can later change it </p>
+                        </div>
+                            <hr />
+                    </div> 
+
+                    {/*Subscription*/} 
+                    <div className="py-8">
+                        <div>
+                            <h1 className="font-bold text-sm text-gray-700">
+                                Subscription Information 
+                            </h1>    
+                            <div className="grid grid-cols-2 gap-2">
+                                <div className="flex flex-col"> 
+                                    <label htmlFor="subscriptionType">Subscription Type</label>  
+                                    <select name=""className="bg-gray-100 rounded-2xl px-3 py-3 "
+                                    id="subscriptionType"
+                                    value={formdata.subscriptionType} 
+                                    onChange={(e) => setFormData({...formdata, subscriptionType: e.target.value})}
+                                    >  
+                                    <option value="paid" className="g-gray-100 rounded-2xl px-3 py-3 ">PAID</option> 
+                                    <option value="trial">FREE TRIAL</option>
+                                    </select>
+                                </div>  
+                                {formdata.subscriptionType === "paid" && (
+                                <div className="flex flex-col"> 
+                                    <label htmlFor="subscriptionType">Duration</label>   
+                                    <select name=""
+                                    className="bg-gray-100 rounded-2xl px-3 py-3"
+                                    id="subscriptionType" 
+                                    value={formdata.duration} 
+                                    onChange={(e) => setFormData({...formdata, duration: e.target.value})} 
+                                    >  
+                                        <option value="3">3 MONTHS</option> 
+                                        <option value="6">6 MONTHS</option> 
+                                        <option value="12">12 MONTHS</option> 
+                                    </select>
+                                </div> 
+                                )}
+                            </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div className="flex flex-col">
+                                        <label htmlFor="startdate">Start Date*</label>  
+                                        <input type="date"  
+                                        className="bg-gray-100 rounded-2xl px-3 py-3"
+                                        id="startDate"
+                                        value={formdata.startDate}
+                                        onChange={(e) => setFormData({...formdata, startDate: e.target.value})}/>  
+                                    </div> 
+                                    <div className="flex flex-col">
+                                        <label htmlFor="expiryDate">Expiry Date</label> 
+                                        <input  
+                                        className="bg-gray-100 rounded-2xl px-3 py-3" 
+                                        type="date"
+                                        id="expiryDate"
+                                        value={formdata.expiryDate}  
+                                        readOnly={formdata.subscriptionType === "paid"}
+                                        onChange={(e) => {
+                                            if (formdata.subscriptionType === "trial") {
+                                                setFormData({
+                                                    ...formdata,
+                                                    expiryDate: e.target.value,
+                                                });
+                                            }
+                                        }}
+                                        />
+                                    </div>
+                                </div>
+                        </div>
+                    </div> 
+
+                    <div className="flex justify-end gap-2">
+                        <button className="cursor-pointer border border-gray-300 rounded-2xl py-2 px-4">
+                            Cancel
+                        </button> 
+                        <button className="bg-black text-white py-2 px-4 rounded-xl cursor-pointer"
+                        onClick={handleCreatePharmacy}>
+                            Create Pharmacy
+                        </button>
                     </div>
 
                     </Modal>
