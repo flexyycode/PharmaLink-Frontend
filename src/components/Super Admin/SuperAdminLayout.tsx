@@ -6,7 +6,7 @@ const navigation = [
     { name: "Dashboard", href: "/super-admin/dashboard", icon: LayoutDashboard },
     { name: "Pharmacy Management", href: "/super-admin/pharmancy", icon: Building2 },
     { name: "Subscription", href:"/super-admin/subscription", icon: CreditCard}, 
-    { name: "Drug Netwrk Monitor", href: "/", icon: Network},
+    { name: "Drug Network Monitor", href: "/super-admin/network", icon: Network},
     { name: "Annalytics", href:"/", icon: ChartColumn }, 
     { name: "Settings", href: "/", icon: Settings }
 ]
@@ -54,7 +54,7 @@ function SuperAdminLayout () {
 
                         <div className="p-4 border-t border-blue-800">
                             <Link to="/login">
-                                <button className="flex items-center gap-3 px-4 py-3 rounded-lg text-blue-200 hover:bg-blue-700/50 hover:text-white w-full">
+                                <button className="flex items-center gap-3 px-4 py-3 rounded-lg text-blue-200 hover:bg-blue-800/50 hover:text-white w-full">
                                     <LogOut className="size-5" /> 
                                     Logout
                                 </button>
