@@ -8,7 +8,7 @@ const navigation = [
     { name: "Subscription", href:"/super-admin/subscription", icon: CreditCard}, 
     { name: "Drug Network Monitor", href: "/super-admin/network", icon: Network},
     { name: "Annalytics", href:"/", icon: ChartColumn }, 
-    { name: "Settings", href: "/", icon: Settings }
+    { name: "Settings", href: "/super-admin/settings", icon: Settings }
 ]
 
 function SuperAdminLayout () { 

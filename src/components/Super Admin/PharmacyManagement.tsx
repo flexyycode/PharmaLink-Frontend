@@ -121,8 +121,8 @@ function PharmacyManagement () {
                                     <input 
                                     className="bg-gray-100 px-3 py-3 rounded-2xl"
                                     id="licenseId" 
-                                    value={formdata.licenseid}
-                                    onChange={(e) => setFormData({...formdata, licenseid: e.target.value})}
+                                    value={formdata.licenseId}
+                                    onChange={(e) => setFormData({...formdata, licenseId: e.target.value})}
                                     placeholder="Enter your License ID"
                                     />
                                 </div>
