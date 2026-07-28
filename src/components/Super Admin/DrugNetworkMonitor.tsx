@@ -1,4 +1,4 @@
-import { Package, AlertTriangle, Search } from "lucide-react"
+import { Package, AlertTriangle, Search } from "lucide-react" 
 
 function DrugNetworkMonitor () {
     return (
