@@ -1,22 +1,21 @@
-import { Shield, Building2, User, CreditCard, Settings, LayoutDashboard, LogOut, Network, ChartColumn } from "lucide-react";  
+import { Shield, User, LayoutDashboard, LogOut, Network, Package, Send } from "lucide-react";  
 import { useLocation, Outlet, Link } from "react-router-dom"; 
 
 
 const navigation = [
-    { name: "Dashboard", href: "/super-admin/dashboard", icon: LayoutDashboard },
-    { name: "Pharmacy Management", href: "/super-admin/pharmancy", icon: Building2 },
-    { name: "Subscription", href:"/super-admin/subscription", icon: CreditCard}, 
-    { name: "Drug Network Monitor", href: "/super-admin/network", icon: Network},
-    { name: "Annalytics", href:"/", icon: ChartColumn }, 
-    { name: "Settings", href: "/super-admin/settings", icon: Settings }
+    { name: "Dashboard", href: "/pharmacy/dashboard", icon: LayoutDashboard },
+    { name: "My Inventory", href: "/pharmacy/inventory", icon: Package },
+    { name: "Network Search", href:"/super-admin/networkSearch", icon: Network}, 
+    { name: "Referrals", href: "/super-admin/referrals", icon: Send},
+    { name: "Profile", href: "/super-admin/profile", icon: User }
 ]
 
-function SuperAdminLayout () { 
+function PharmacyLayout () { 
     const location = useLocation(); 
 
     return (
         <div className="flex h-screen bg-gray-200">
-            {/* Sidebar - Dark Navy for Super Admin */}
+            {/* Sidebar - Dark Navy for Pharmacy Dashboard */}
             <aside className="bg-[#0D47A1] w-72 text-white flex flex-col">
                     <div className="flex items-center gap-3 p-6 border-b border-blue-800">  
                         <div className="bg-white rounded-lg p-2">
@@ -27,7 +26,7 @@ function SuperAdminLayout () {
                                 PharmaLink
                             </h1> 
                             <p className="text-xs">
-                                Super Admin Dashboard
+                                Pharmacy Dashboard
                             </p>
                         </div>
                     </div> 
@@ -72,4 +71,4 @@ function SuperAdminLayout () {
 
 
 
-export default SuperAdminLayout; 
+export default PharmacyLayout; 

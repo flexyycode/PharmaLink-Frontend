@@ -2,32 +2,56 @@ import '../App.css';
 import { Shield, Building2, User} from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';  
-
+import api from '../api/client'; 
 
 
 
 function Login() { 
     const navigate = useNavigate(); 
+    const [error, setError] = useState(''); 
     const [email, setEmail] = useState(''); 
-    const [password, setPassword] = useState('');
-    const [selectedRole, setSelectedRole] = useState<"super_admin" | "pharmacy" | null>(null);  
+    const [password, setPassword] = useState('');  
+    const [toast, setToast] = useState <string | null>(null)
+    const [isLoading, setIsLoading] = useState(false);
+    const [selectedRole, setSelectedRole] = useState<"super_admin" | "pharmacy" | null>(null);   
+
+    const showToast = (message: string) => {
+        setToast(message); 
+        setTimeout(() => setToast(null), 4000)
+    }
     
-    const handleLogin = (e: React.FormEvent) => {
-         e.preventDefault();  
-    
-        // Authentication 
-        if (selectedRole === "super_admin") {
-            // Redirect to super admin dashboard
-            navigate('/super-admin/dashboard'); 
-        } else if (selectedRole === "pharmacy") {
-            // Redirect to pharmacy dashboard
-            navigate('/pharmacy-dashboard'); 
-        } else {
-            alert('Please select a role to continue.'); 
-        }
-    }; 
+    const handleLogin = async (e: React.FormEvent) => {
+            e.preventDefault();
+            setError(''); 
+            setIsLoading(true);  
+            const startTime = Date.now(); //
+
+            try {
+                const response = await api.post('/auth/login', { email, password });
+                const { access_token, role } = response.data;
+
+                localStorage.setItem('token', access_token); 
+
+                const elapsed = Date.now() - startTime; 
+                const minDelay = 3000; // 3 seconds
+                if (elapsed < minDelay) {
+                    await new Promise((resolve) => setTimeout(resolve, minDelay - elapsed)); 
+                }
+ 
+                if (role === 'SUPER_ADMIN') {
+                    navigate('/super-admin/dashboard');
+                } else {
+                    navigate('/pharmacy/dashboard');
+                }
+            } catch (err: any) { 
+                console.error(err); 
+                    showToast(err.response?.data?.message || 'Invalid email or password.');
+            } finally { 
+                setIsLoading(false); 
+            }
+        };
     return (
-        <div className='p-8 bg-gradient-to-br from-blue-50 to-white mx-auto'> 
+        <div className='p-8 bg-linear-to-br from-blue-50 to-white mx-auto'> 
             <div className='mx-auto py-40 w-full max-w-5xl'> 
                 <div className='mx-auto container'> 
                     <Link to="/home">
@@ -47,7 +71,7 @@ function Login() {
                             onClick={() => setSelectedRole("super_admin")} 
                             >
                             <FeatureCard 
-                            icon={<Shield className='size-25 py-5 px-5 text-blue-200 bg-gradient-to-br from-blue-900 to-blue-700 rounded-2xl' />} 
+                            icon={<Shield className='size-25 py-5 px-5 text-blue-200 bg-linear-to-br from-blue-900 to-blue-700 rounded-2xl' />} 
                             title="Super Admin" 
                             subtitle="Platform Owner & Control"  
                             description="Full platform access, pharmacy management, subscription control, and network monitoring" />
@@ -58,7 +82,7 @@ function Login() {
                         onClick={() => setSelectedRole('pharmacy')}
                         > 
                             <FeatureCard 
-                            icon={<Building2 className='size-25 py-5 px-5 text-blue-200 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl' />} 
+                            icon={<Building2 className='size-25 py-5 px-5 text-blue-200 bg-linear-to-br from-blue-600 to-blue-500 rounded-2xl' />} 
                             title="Pharmacy" 
                             subtitle="Pharmacy Dashboard Access" 
                             description="Manage invetory, serach network drugs, send referrals and collaborate with other pharmacies" />
@@ -124,15 +148,16 @@ function Login() {
 
                         <button
                             type='submit'
-                            className='w-full bg-gray-900 text-white p-3 pt-3 rounded-2xl border-0 cursor-pointer'
+                            className='w-full bg-gray-900 text-white p-3 pt-3 rounded-2xl border-0 cursor-pointer disabled:opacity-50 disabled:cursor-wait' 
+                            disabled={isLoading}
                         >
-                            Sign In
+                            {isLoading ? "Logging in..." : "Login"}
                         </button>
 
                         <button
                             type='button'
                             onClick={() => setSelectedRole(null)}
-                            className='w-full mt-4 border-1 border-gray-300 hover:bg-gray-200 p-3 rounded-2xl cursor-pointer'
+                            className='w-full mt-4 border border-gray-300 hover:bg-gray-200 p-3 rounded-2xl cursor-pointer'
                         >
                             Back to role selection
                         </button>
@@ -149,7 +174,12 @@ function Login() {
                                 </Link>
                         </div>
                     </div>
-            </div>
+            </div> 
+             {toast && (
+                    <div className="fixed bottom-6 right-6 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 z-50">
+                        ✅ {toast}
+                    </div>
+                )}
         </div> 
     )
 }

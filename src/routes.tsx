@@ -10,6 +10,8 @@ import PharmacyManagement from "./components/Super Admin/PharmacyManagement";
 import SubscriptionControl from "./components/Super Admin/SubscriptionControl";
 import SuperAdminSettings from "./components/Super Admin/SuperAdminSettings"; 
 import DrugNetworkMonitor from "./components/Super Admin/DrugNetworkMonitor";
+import PharmacyLayout from "./components/Pharmacy/PharmacyLayout"; 
+import PharmacyDashboard from "./components/Pharmacy/PharmacyDashboard"
 
 
 
@@ -18,7 +20,8 @@ export const router = createBrowserRouter([
     {
         path: "/",
     Component: Root,
-    children: [
+    children: [ 
+      { index: true, element: <Navigate to="home" replace /> },
       { path:"home", index: true, Component: Home }, 
       { path: "system-flow", Component: SystemFlow }, 
       { path: "contact", Component: Contact }, 
@@ -37,7 +40,17 @@ export const router = createBrowserRouter([
           { path: "settings", Component: SuperAdminSettings }, 
           { path: "network", Component: DrugNetworkMonitor }
         ],
-      }, 
+      },   
+
+
+      {
+        path: "pharmacy", 
+        Component: PharmacyLayout, 
+        children: [
+          { index: true, element: <Navigate to="dashboard" replace /> },  
+          { path: "dashboard", Component: PharmacyDashboard }
+        ]
+      }
     ] 
     }
 ]) 

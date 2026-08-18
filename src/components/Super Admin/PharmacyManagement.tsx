@@ -1,9 +1,32 @@
 import { Plus, MapPin, Slice } from "lucide-react"; 
 import Modal from "../Modal";
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";  
+import api from "../../api/client";
 
 
-function PharmacyManagement () { 
+function PharmacyManagement () {  
+
+    const [pharmacies, setPharmacies] = useState<any[]>([]);   
+    const [isSubmitting, setIsSubmitting] = useState(false); 
+    const [toast, setToast] = useState<string | null>(null);   
+
+    const showToast = (message: string) => {
+        setToast(message); 
+        setTimeout(() => setToast(null), 4000); 
+    }; 
+
+    const fetchPharmacies = async () => {
+        try{
+            const response = await api.get('/pharmacy'); 
+            setPharmacies(response.data); 
+        } catch (err) {
+            console.error(err); 
+        }
+    };  
+
+    useEffect(() => {
+        fetchPharmacies();
+    }, []); 
 
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [formdata, setFormData] = useState({ 
@@ -11,11 +34,9 @@ function PharmacyManagement () {
         licenseId: "", 
         contactEmail: "", 
         phone: "",  
-        address: "",  
+        street: "",  
         city: "", 
         state: "", 
-        zipCode: "", 
-        location: "", 
         password: "", 
         subscriptionType: "paid",  
         duration: "12", 
@@ -45,26 +66,55 @@ function PharmacyManagement () {
         formdata.subscriptionType 
     ]) 
 
-    const handleCreatePharmacy = () => {
-        const newPharmacy: Pharmacy = {
-            id: `pharm-${Date.now()}`, 
+    const handleCreatePharmacy = async () => {  
+        setIsSubmitting(true);
+        const startTime = Date.now(); 
+        const subscriptionTypeMap: Record<string, string> = {
+            paid: "PAID", 
+            trial: "FREE_TRIAL"
+        } 
+        const durationMap: Record<string, string> = {
+            "3": "THREE_MONTHS", 
+            "6": "SIX_MONTHS", 
+            "12": "ONE_YEAR", 
+        }
+        const payload = {
             name: formdata.name, 
             licenseId: formdata.licenseId,  
             contactEmail: formdata.contactEmail, 
             phone: formdata.phone, 
-            address: formdata.address,
+            street: formdata.street,
             city: formdata.city, 
             state: formdata.state, 
-            location: formdata.location,  
-            coordinates: formdata.coordinates.lat !== 0 ? formdata.coordinates : undifined,
-            status: "active", 
-            subscriptionType: formdata.subscriptionType, 
+            password: formdata.password,  
+            subscriptionType: subscriptionTypeMap [formdata.subscriptionType],  
+            ...(formdata.subscriptionType === "paid" 
+                ? { duration: durationMap[formdata.duration]}  
+                : {}
+            ),
             startDate: formdata.startDate, 
             expiryDate: formdata.expiryDate, 
-            createdAt: new Date().toISOString(),
-
+        }; 
+        
+        try {
+            await api.post("/pharmacy", payload); 
+            showToast("Pharmacy Created Sucessfully!"); 
+            setIsCreateOpen(false);  
+            fetchPharmacies(); //referesh the list so a new one shows up 
+        } catch (err: any) {
+            console.error(err); 
+            showToast(err.response?.data?.message || "Failed to create Pharmacy."); 
+        } finally {  
+            const elapsed = Date.now() - startTime; 
+            const minDelay = 3000; // 3 seconds 
+            if (elapsed < minDelay) {
+                await new Promise((resolve) => setTimeout(resolve, minDelay - elapsed))
+            }
+            setIsSubmitting(false); 
         }
-    }
+    };  
+
+
     return ( 
         <div className="h-screen p-8 overflow-hidden"> 
             <div className="flex justify-between items-center"> 
@@ -173,8 +223,8 @@ function PharmacyManagement () {
                                     <input  
                                     className="bg-gray-100 px-3 py-3 rounded-2xl"
                                     id="address" 
-                                    value={formdata.address} 
-                                    onChange={(e) => setFormData({...formdata, address: e.target.value})}
+                                    value={formdata.street} 
+                                    onChange={(e) => setFormData({...formdata, street: e.target.value})}
                                     placeholder="Enter Pharmacy Address"
                                     /> 
                                 </div>  
@@ -203,29 +253,6 @@ function PharmacyManagement () {
                                     onChange={(e) => setFormData({...formdata, state: e.target.value})}
                                     placeholder="Enter City"
                                     /> 
-                                </div> 
-                                <div className="flex flex-col pb-5">
-                                    <label htmlFor="zipCode"
-                                    className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
-                                    >Zip Code * </label>  
-                                    <input  
-                                    className="bg-gray-100 px-3 py-3 rounded-2xl"
-                                    id="zipCode" 
-                                    value={formdata.zipCode} 
-                                    onChange={(e) => setFormData({...formdata, zipCode: e.target.value})}
-                                    placeholder="Enter Zip Code"
-                                    /> 
-                                </div> 
-                                <div className="flex flex-col">
-                                    <label htmlFor="location"
-                                    className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
-                                    >Full Location Summary</label> 
-                                    <input  
-                                    className="bg-gray-100 px-3 py-3 rounded-2xl"
-                                    id="location"
-                                    value={formdata.location}
-                                    onChange={(e) => setFormData({...formdata, location: e.target.value})}
-                                    placeholder="street Address, city, state" />
                                 </div>
                             </div>
                         </div> 
@@ -327,15 +354,70 @@ function PharmacyManagement () {
                         <button className="cursor-pointer border border-gray-300 rounded-2xl py-2 px-4">
                             Cancel
                         </button> 
-                        <button className="bg-black text-white py-2 px-4 rounded-xl cursor-pointer"
-                        onClick={handleCreatePharmacy}>
-                            Create Pharmacy
+                        <button className="bg-black text-white py-2 px-4 rounded-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={handleCreatePharmacy} 
+                        disabled={isSubmitting}
+                        >
+                            {isSubmitting ? "Creating..." : "Create Pharmacy"}
                         </button>
                     </div>
 
-                    </Modal>
-                </div> 
-            </div> 
+                    </Modal> 
+
+            </div>                  
+             </div>   
+        <div className="py-10">
+             <div className="py-10 px-5 border border-gray-400 rounded-2xl">  
+                <h1 className="font-bold">All Pharmacies</h1> 
+                <p>Manage pharmacy accounts and subscriptions</p> 
+                <div className="pt-10">
+                    <table className="w-full"> 
+                        <thead className="text-left"> 
+                            <tr className="border-b border-gray-300">
+                        <th className="p-4 font-semibold text-sm text-gray-700">
+                            Pharmarcy Name
+                        </th> 
+                         <th className="p-4 font-semibold text-sm text-gray-700">
+                            License ID
+                        </th>
+                         <th className="p-4 font-semibold text-sm text-gray-700">
+                            Status
+                        </th>
+                         <th className="p-4 font-semibold text-sm text-gray-700">
+                            Subscription Type
+                        </th>
+                         <th className="p-4 font-semibold text-sm text-gray-700">
+                            Expiry Date
+                        </th> 
+                        <th className="p-4 font-semibold text-sm text-gray-700 text-right">
+                           Actions
+                        </th>
+                            </tr>
+                        </thead> 
+                        <tbody>
+                            {pharmacies.map((pharmacy) => (
+                                <tr key={pharmacy.id} className="border-b border-gray-300"> 
+                                <td className="p-4"> 
+                                    <div className="font-medium text-gray-900">{pharmacy.name}</div> 
+                                    <div className="text-sm text-gray-500">{pharmacy.fullAddress}</div>
+                                </td> 
+                                <td className="p-4">{pharmacy.licenseId}</td>
+                                <td className="p-4">{pharmacy.status}</td> 
+                                <td className="p-4">{pharmacy.subscriptionType}</td> 
+                                <td className="p-4">{new Date(pharmacy.expiryDate).toLocaleDateString()}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table> 
+                </div>
+                    </div> 
+        </div>
+                {toast && (
+                    <div className="fixed bottom-6 right-6 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 z-50">
+                        ✅ {toast}
+                    </div>
+                )}
+
         </div>
     )
 }
