@@ -1,13 +1,13 @@
-import { Shield, User, LayoutDashboard, LogOut, Network, Package, Send } from "lucide-react";  
+import { Building2, User, LayoutDashboard, LogOut, Network, Package, Send } from "lucide-react";  
 import { useLocation, Outlet, Link } from "react-router-dom"; 
 
 
 const navigation = [
     { name: "Dashboard", href: "/pharmacy/dashboard", icon: LayoutDashboard },
     { name: "My Inventory", href: "/pharmacy/inventory", icon: Package },
-    { name: "Network Search", href:"/super-admin/networkSearch", icon: Network}, 
-    { name: "Referrals", href: "/super-admin/referrals", icon: Send},
-    { name: "Profile", href: "/super-admin/profile", icon: User }
+    { name: "Network Search", href:"/pharmacy/networkSearch", icon: Network}, 
+    { name: "Referrals", href: "/pharmacy/referrals", icon: Send},
+    { name: "Profile", href: "/pharmacy/profile", icon: User }
 ]
 
 function PharmacyLayout () { 
@@ -16,10 +16,10 @@ function PharmacyLayout () {
     return (
         <div className="flex h-screen bg-gray-200">
             {/* Sidebar - Dark Navy for Pharmacy Dashboard */}
-            <aside className="bg-[#0D47A1] w-72 text-white flex flex-col">
-                    <div className="flex items-center gap-3 p-6 border-b border-blue-800">  
+            <aside className="bg-[#1e49c9] w-72 text-white flex flex-col">
+                    <div className="flex items-center gap-3 p-6 border-b border-blue-600">  
                         <div className="bg-white rounded-lg p-2">
-                        <Shield className="text-[#0D47A1] size-6" /> 
+                        <Building2 className="text-[#0D47A1] size-6" /> 
                         </div>  
                         <div>
                             <h1 className="font-bold text-xl">
@@ -40,8 +40,8 @@ function PharmacyLayout () {
                                     to={item.href} 
                                     className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                                         isActive 
-                                        ? "bg-blue-800 text-white" 
-                                        : "text-blue-100 hover:bg-blue-800/50"
+                                        ? "bg-blue-600 text-white" 
+                                        : "text-blue-100 hover:bg-blue-500/50"
                                     }`}
                                 >
                                     <item.icon className="size-5" /> 

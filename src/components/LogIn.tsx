@@ -1,5 +1,5 @@
 import '../App.css'; 
-import { Shield, Building2, User} from 'lucide-react';
+import { Shield, Building2, User, Check} from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';  
 import api from '../api/client'; 
@@ -177,7 +177,7 @@ function Login() {
             </div> 
              {toast && (
                     <div className="fixed bottom-6 right-6 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 z-50">
-                        ✅ {toast}
+                        <Check /> {toast}
                     </div>
                 )}
         </div> 

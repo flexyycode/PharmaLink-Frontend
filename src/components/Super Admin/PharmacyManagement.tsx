@@ -1,4 +1,4 @@
-import { Plus, MapPin, Slice } from "lucide-react"; 
+import { Plus, MapPin } from "lucide-react"; 
 import Modal from "../Modal";
 import { useState, useEffect } from "react";  
 import api from "../../api/client";
@@ -71,7 +71,7 @@ function PharmacyManagement () {
         const startTime = Date.now(); 
         const subscriptionTypeMap: Record<string, string> = {
             paid: "PAID", 
-            trial: "FREE_TRIAL"
+            trial: "FREE TRIAL" 
         } 
         const durationMap: Record<string, string> = {
             "3": "THREE_MONTHS", 

@@ -12,6 +12,9 @@ import SuperAdminSettings from "./components/Super Admin/SuperAdminSettings";
 import DrugNetworkMonitor from "./components/Super Admin/DrugNetworkMonitor";
 import PharmacyLayout from "./components/Pharmacy/PharmacyLayout"; 
 import PharmacyDashboard from "./components/Pharmacy/PharmacyDashboard"
+import MyInventory from "./components/Pharmacy/MyInventory";
+// import ProtectedRoute from "./components/ProtectedRoute";
+import NetworkSearch from "./components/Pharmacy/NetworkSearch";
 
 
 
@@ -31,6 +34,11 @@ export const router = createBrowserRouter([
 
       {
         path: "super-admin",
+        // element: (
+        //   <ProtectedRoute>
+        //     <SuperAdminLayout />
+        //   </ProtectedRoute>
+        // ), 
         Component: SuperAdminLayout, 
         children: [
           { index: true, element: <Navigate to="dashboard" replace /> }, 
@@ -41,14 +49,21 @@ export const router = createBrowserRouter([
           { path: "network", Component: DrugNetworkMonitor }
         ],
       },   
-
+      
 
       {
         path: "pharmacy", 
+        // element: (
+        //   <ProtectedRoute>
+        //     <PharmacyLayout />
+        //   </ProtectedRoute>
+        // ),  
         Component: PharmacyLayout, 
         children: [
           { index: true, element: <Navigate to="dashboard" replace /> },  
-          { path: "dashboard", Component: PharmacyDashboard }
+          { path: "dashboard", Component: PharmacyDashboard }, 
+          { path: "inventory", Component: MyInventory }, 
+          { path: "networkSearch", Component: NetworkSearch }, 
         ]
       }
     ] 

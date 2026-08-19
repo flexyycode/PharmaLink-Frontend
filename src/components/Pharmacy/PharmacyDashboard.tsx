@@ -41,14 +41,14 @@ function PharmacyDashboard () {
         </div> 
 
         <div className="py-5">
-        <div className="px-4 py-6 border border-gray-500 rounded-2xl">
+        <div className="px-4 py-6 border border-gray-300 rounded-2xl">
             <div>
                 <div className="">
                     <h1 className="font-bold">Recent Inventory</h1>
                     <p className="text-gray-500">Latest updates to your inventory</p>
                 </div> 
             </div> 
-            <div className="flex justify-between items-center"> 
+            <div className="flex justify-between items-center border-b border-b-gray-300"> 
                 <div className="flex pt-5">
                     <Package className="bg-blue-200 text-blue-500 p-1 size-10 rounded-lg" />
                     <div className="pl-3">
