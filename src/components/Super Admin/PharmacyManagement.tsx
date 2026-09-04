@@ -1,4 +1,4 @@
-import { Plus, MapPin, Trash2, Edit, Eye, Ban, CheckCircle } from "lucide-react"; 
+import { Plus, MapPin, Trash2, Edit, Eye, CheckCircle } from "lucide-react"; 
 import Modal from "../Modal";
 import { useState, useEffect } from "react";  
 import api from "../../api/client";
@@ -405,10 +405,10 @@ function PharmacyManagement () {
                                 <td className="p-4">{pharmacy.status}</td> 
                                 <td className="p-4">{pharmacy.subscriptionType}</td> 
                                 <td className="p-4">{new Date(pharmacy.expiryDate).toLocaleDateString()}</td>  
-                                <td className="cursor-pointer flex justify-end items-center text-right p-4 gap-2 font-light text-gray-500"> 
-                                    <Eye className="size-6 rounded-sm p-1 gap-2 border border-gray-300 hover:bg-gray-300"/> 
-                                    <Edit className="size-6 rounded-sm p-1 gap-2 border border-gray-300 hover:bg-gray-300"/>
-                                    <Trash2 className="bg-red-700 text-white rounded-sm p-1 gap-2 size-6"/>  
+                                <td className="flex justify-end items-center text-right p-4 gap-2 font-light text-gray-500"> 
+                                    <Eye className="size-6 rounded-sm p-1 gap-2 border border-gray-300 hover:bg-gray-300 cursor-pointer"/> 
+                                    <Edit className="size-6 rounded-sm p-1 gap-2 border border-gray-300 hover:bg-gray-300 cursor-pointer"/>
+                                    <Trash2 className="bg-red-700 text-white rounded-sm p-1 gap-2 size-6 cursor-pointer"/>  
                                 </td>
                                 </tr>
                             ))}
