@@ -1,4 +1,4 @@
-import { Plus, MapPin, Trash2, Edit, Eye, CheckCircle } from "lucide-react"; 
+import { Plus, MapPin, Trash2, Edit, Eye } from "lucide-react"; 
 import Modal from "../Modal";
 import { useState, useEffect } from "react";  
 import api from "../../api/client";
@@ -64,14 +64,19 @@ function PharmacyManagement () {
         formdata.startDate,
         formdata.duration,
         formdata.subscriptionType 
-    ]) 
+    ])  
+
+    const statusStyles = {
+        ACTIVE: "bg-green-100 text-green-800",
+        EXPIRED: "bg-red-100 text-red-800",
+    }
 
     const handleCreatePharmacy = async () => {  
         setIsSubmitting(true);
         const startTime = Date.now(); 
         const subscriptionTypeMap: Record<string, string> = {
             paid: "PAID", 
-            trial: "FREE TRIAL" 
+            trial: "FREE_TRIAL" 
         } 
         const durationMap: Record<string, string> = {
             "3": "THREE_MONTHS", 
@@ -88,7 +93,7 @@ function PharmacyManagement () {
             state: formdata.state, 
             password: formdata.password,  
             subscriptionType: subscriptionTypeMap [formdata.subscriptionType],  
-            ...(formdata.subscriptionType === "paid" 
+            ...(formdata.subscriptionType === "trial" 
                 ? { duration: durationMap[formdata.duration]}  
                 : {}
             ),
@@ -402,7 +407,11 @@ function PharmacyManagement () {
                                     <div className="text-sm text-gray-500">{pharmacy.fullAddress}</div>
                                 </td> 
                                 <td className="p-4">{pharmacy.licenseId}</td>
-                                <td className="p-4">{pharmacy.status}</td> 
+                                <td className="p-4">
+                                    {/* <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusStyles[pharmacy.subscriptionStatus as keyof typeof statusStyles]}`}>
+                                        {pharmacy.subscriptionStatus === 'ACTIVE' ? 'Active' : 'Expired'}
+                                    </span> */}
+                                </td> 
                                 <td className="p-4">{pharmacy.subscriptionType}</td> 
                                 <td className="p-4">{new Date(pharmacy.expiryDate).toLocaleDateString()}</td>  
                                 <td className="flex justify-end items-center text-right p-4 gap-2 font-light text-gray-500"> 

@@ -1,5 +1,5 @@
 import '../App.css'; 
-import { Shield, Building2, User, Check} from 'lucide-react';
+import { Shield, Building2, User, X, Check } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';  
 import api from '../api/client'; 
@@ -11,11 +11,11 @@ function Login() {
     const [error, setError] = useState(''); 
     const [email, setEmail] = useState(''); 
     const [password, setPassword] = useState('');  
-    const [toast, setToast] = useState <string | null>(null)
+    const [toast, setToast] = useState <React.ReactNode | null>(null)
     const [isLoading, setIsLoading] = useState(false);
     const [selectedRole, setSelectedRole] = useState<"super_admin" | "pharmacy" | null>(null);   
 
-    const showToast = (message: string) => {
+    const showToast = (message: React.ReactNode) => {
         setToast(message); 
         setTimeout(() => setToast(null), 4000)
     }
@@ -24,28 +24,39 @@ function Login() {
             e.preventDefault();
             setError(''); 
             setIsLoading(true);  
-            const startTime = Date.now(); //
 
             try {
                 const response = await api.post('/auth/login', { email, password });
                 const { access_token, role } = response.data;
 
                 localStorage.setItem('token', access_token); 
-
-                const elapsed = Date.now() - startTime; 
-                const minDelay = 3000; // 3 seconds
-                if (elapsed < minDelay) {
-                    await new Promise((resolve) => setTimeout(resolve, minDelay - elapsed)); 
-                }
  
                 if (role === 'SUPER_ADMIN') {
-                    navigate('/super-admin/dashboard');
+                    showToast
+                    ( 
+                    <span className='flex items-center gap-2'>
+                    <Check className='size-4' />
+                     Login successful! Redirecting to Super Admin Dashboard...
+                    </span> 
+                    ) 
+                    setTimeout(() => navigate('/super-admin/dashboard'), 2000); // Redirect after 2 seconds
                 } else {
-                    navigate('/pharmacy/dashboard');
+                    showToast( 
+                    <span className='flex items-center gap-2'>
+                    <Check className='size-4' />
+                     Login successful! Redirecting to Pharmacy Dashboard...
+                    </span> 
+                    ) 
+                    setTimeout(() => navigate('/pharmacy/dashboard'), 2000); // Redirect after 2 seconds
                 }
             } catch (err: any) { 
-                console.error(err); 
-                    showToast(err.response?.data?.message || 'Invalid email or password.');
+                console.error(err);  
+                showToast(
+                    <span className='flex items-center gap-2'>
+                    <X className='size-4' />
+                    {err.response?.data?.message || 'Invalid email or password. Please try again.'}
+                    </span> 
+                    );
             } finally { 
                 setIsLoading(false); 
             }
@@ -148,7 +159,7 @@ function Login() {
 
                         <button
                             type='submit'
-                            className='w-full bg-gray-900 text-white p-3 pt-3 rounded-2xl border-0 cursor-pointer disabled:opacity-50 disabled:cursor-wait' 
+                            className='w-full bg-gray-900 text-white p-3 pt-3 rounded-2xl border-0 cursor-pointer disabled:opacity-400 disabled:cursor-wait' 
                             disabled={isLoading}
                         >
                             {isLoading ? "Logging in..." : "Login"}
@@ -177,7 +188,7 @@ function Login() {
             </div> 
              {toast && (
                     <div className="fixed bottom-6 right-6 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 z-50">
-                        <Check /> {toast}
+                        {toast}
                     </div>
                 )}
         </div> 
